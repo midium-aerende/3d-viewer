@@ -49,26 +49,35 @@ body {
 
 #engraving-section {
     margin-top: 10px;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 #engraving-input {
+    background: none;
+    font-family: 'Sitka Heading', sans-serif;
+    font-size: 15px;
+    border: none;
     padding: 5px;
     margin-top: 5px;
     width: 200px;
 }
 
+#engraving-input:focus {
+    outline: none;
+}
+
 #engravingButton {
     margin-top: 10px;
     padding: 8px 15px;
-    background-color: #FF6F61;
+    background-color: #C6BAA2;
+    font-size: 15px;
     color: white;
     border: none;
     cursor: pointer;
 }
 
 #engravingButton:hover {
-    background-color: #E55C53;
+    background-color: #C0B0A0;
 }
 
 #engraving-text {
