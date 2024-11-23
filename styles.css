@@ -1,83 +1,151 @@
 body {
-    display: grid;
-    align-items: center;
-    justify-items: center;
     width: 100vw;
-    height: 100vh;
     margin: 0;
-    overflow: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #2C2C2C;
+    font-family: 'Sitka Heading', sans-serif; /* Application de la police Sitka Heading */
+    background-color: #E4E4E4;
     color: #fff;
 }
 
-#price-display {
-    position: fixed;
-    top: 10px;
-    font-size: 20px; /* Réduit la taille du texte */
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 8px 15px; /* Réduit l'espacement intérieur */
-    border-radius: 10px; /* Réduit les bords arrondis */
-    font-weight: 600;
-    animation: slidein-fadein 0.6s ease-out;
-    animation-fill-mode: forwards;
-    z-index: 10;
+#logo {
+    position: absolute;
+    padding: 20px;
+    top: 20px; /* Décalage du logo depuis le haut de la page */
+    right: 80px; /* Décalage du logo depuis la gauche */
+    font-size: 25px; /* Taille de la lettre */
+    font-weight: 300; /* Rendre la lettre plus épaisse */
+    color: #000000; /* Couleur du logo (peut être personnalisée) */
+    font-family: 'Sitka Heading', sans-serif; /* Police utilisée pour le logo */
 }
 
-/* Première barre horizontale pour les pierres */
+#ring-info {
+    position: absolute;
+    top: 10%;
+    left: 120px; 
+    font-size: 30px; 
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    color: #000000;
+    font-family: 'Sitka Heading', sans-serif; /* Application de la police Sitka Heading ici aussi */
+}
+
+#buyButton {
+    width: 200px;
+    padding: 12px 24px;
+    font-family: 'Sitka Heading', sans-serif;
+    font-size: 20px;
+    color: #080400; /* Texte en couleur #080400 */
+    background-color: #ffffff20; /* Fond blanc clair */
+    border: 2px solid #C6BAA2; /* Bordure de 4px #C6BAA2 */
+    border-radius: 0px; /* Bordures non arrondies */
+    cursor: pointer;
+    text-align: center;
+    margin-top: 20px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: none;
+}
+
+#engraving-section {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+#engraving-input {
+    padding: 5px;
+    margin-top: 5px;
+    width: 200px;
+}
+
+#engravingButton {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #FF6F61;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#engravingButton:hover {
+    background-color: #E55C53;
+}
+
+#engraving-text {
+    margin-top: 10px;
+    font-style: italic;
+    color: #777;
+}
+
+/* Effet de survol pour le bouton */
+#buyButton:hover {
+    background-color: #ffffff10; /* Couleur de fond plus claire lors du survol */
+    transform: scale(1.05); /* Agrandissement lors du survol */
+}
+
+/* Effet lors du clic sur le bouton */
+#buyButton:active {
+    transform: scale(0.98); /* Réduction de taille lors du clic */
+}
+
+#ringName, #ringPrice {
+    margin: 0;
+    padding: 0;
+}
+
+#button-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
 #button-bar1, #button-bar2 {
     position: fixed;
-    left: 20px; /* Placer à gauche */
-    width: 20vw; /* Largeur réduite à 45% pour plus de compacité */
+    left: 120px;
     display: flex;
-    justify-content: space-arround; /* Réduit l'espacement entre les boutons */
-    gap: 8px; /* Réduit l'espacement entre les boutons */
-    background-color: rgba(255, 255, 255, 0.5); /* Fond blanc semi-transparent */
-    padding: 6px; /* Réduit l'espacement intérieur */
-    border-radius: 20px; /* Bordures arrondies plus petites */
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Ombre portée */
+    justify-content: space-around;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 6px 10px;
+    border-radius: 20px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Positionnement vertical des barres */
 #button-bar1 {
-    bottom: 120px; /* Positionne la première barre un peu plus haut */
+    bottom: 130px;
 }
 
 #button-bar2 {
-    bottom: 30px; /* Positionne la deuxième barre plus bas */
+    bottom: 50px;
 }
 
-/* Style des boutons */
 button {
-    padding: 6px 12px; /* Réduit l'espacement intérieur des boutons */
-    font-size: 11px; /* Réduit la taille du texte */
-    color: #000;   /* Texte noir */
-    background-color: #fff; /* Fond des boutons */
+    padding: 6px 12px;
+    font-size: 11px;
+    color: #000;
+    background-color: #fff;
     border: none;
     cursor: pointer;
-    border-radius: 15px; /* Réduit les bords arrondis des boutons */
+    border-radius: 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px; /* Réduit l'espacement entre l'icône et le texte */
+    gap: 4px;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Ombre portée */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Effet au survol */
 button:hover {
-    background-color: rgba(255, 255, 255, 0.7); /* Fond plus transparent */
-    transform: scale(1.05); /* Légère augmentation de taille */
+    background-color: rgba(255, 255, 255, 0.7);
+    transform: scale(1.05);
 }
 
-/* Effet au clic */
 button:active {
-    transform: scale(0.98); /* Réduction de taille lors du clic */
+    transform: scale(0.98);
 }
 
-/* Dimensions des icônes */
 button svg {
-    width: 20px;  /* Réduit la taille de l'icône */
-    height: 20px; /* Réduit la taille de l'icône */
+    width: 20px;
+    height: 20px;
 }

@@ -3,56 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Viewer Bijoux</title>
+    <title>Modèle GLB avec matériaux et fond clair</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="price-display">Prix: €0</div>
+  <div id="logo">J</div>
 
-    <div id="button-bar">
-        <div class="button-column">
-            <button id="ruby">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
-                    <path d="M480-165q-17 0-33-7.5T419-194L113-560q-9-11-13.5-24T95-611q0-9 1.5-18.5T103-647l75-149q11-20 29.5-32t41.5-12h462q23 0 41.5 12t29.5 32l75 149q5 8 6.5 17.5T865-611q0 14-4.5 27T847-560L541-194q-12 14-28 21.5t-33 7.5Zm-95-475h190l-60-120h-70l-60 120Zm55 347v-267H218l222 267Zm80 0 222-267H520v267Zm144-347h106l-60-120H604l60 120Zm-474 0h106l60-120H250l-60 120Z" fill="#FF6F61"/>
-                </svg>
-                Rubis
-            </button>            
-            <button id="diamond">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
-                    <path d="M480-165q-17 0-33-7.5T419-194L113-560q-9-11-13.5-24T95-611q0-9 1.5-18.5T103-647l75-149q11-20 29.5-32t41.5-12h462q23 0 41.5 12t29.5 32l75 149q5 8 6.5 17.5T865-611q0 14-4.5 27T847-560L541-194q-12 14-28 21.5t-33 7.5Zm-95-475h190l-60-120h-70l-60 120Zm55 347v-267H218l222 267Zm80 0 222-267H520v267Zm144-347h106l-60-120H604l60 120Zm-474 0h106l60-120H250l-60 120Z" fill="#A2C2E0"/>
-                </svg>
-                Diamant
-            </button>            
-            <button id="yellowDiamond">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
-                    <path d="M480-165q-17 0-33-7.5T419-194L113-560q-9-11-13.5-24T95-611q0-9 1.5-18.5T103-647l75-149q11-20 29.5-32t41.5-12h462q23 0 41.5 12t29.5 32l75 149q5 8 6.5 17.5T865-611q0 14-4.5 27T847-560L541-194q-12 14-28 21.5t-33 7.5Zm-95-475h190l-60-120h-70l-60 120Zm55 347v-267H218l222 267Zm80 0 222-267H520v267Zm144-347h106l-60-120H604l60 120Zm-474 0h106l60-120H250l-60 120Z" fill="#F1E07D"/>
-                </svg>
-                Diamant Jaune
-            </button>            
-        </div>
-        <div class="button-column">
-            <button id="gold">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
-                    <circle cx="12" cy="12" r="10" fill="#FFCC66"/>
-                </svg>
-                Or
-            </button>
-            <button id="silver">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
-                    <circle cx="12" cy="12" r="10" fill="#D3D3D3"/>
-                </svg>
-                Argent
-            </button>
-            <button id="roseGold">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
-                    <circle cx="12" cy="12" r="10" fill="#E4B7B2"/>
-                </svg>
-                Or Rose
-            </button>
-        </div>
+  <div id="ring-info">
+    <p id="ringName">Bague Diamant en Or</p>
+    <p id="ringPrice">Prix : 500€</p>
+
+    <!-- Option de gravure -->
+    <div id="engraving-section">
+        <label for="engraving-input">Gravure (facultative) :</label>
+        <input type="text" id="engraving-input" placeholder="Entrez votre gravure ici...">
+        <button id="engravingButton">Ajouter la gravure</button>
+        <p id="engraving-text">Aucune gravure sélectionnée</p>
     </div>
 
-    <script type="module" src="./main.js"></script>
-    <script src="script.js"></script>
+    <!-- Bouton "Acheter" ajouté ici -->
+    <button id="buyButton">Acheter</button>
+</div>
+
+
+  <!-- Conteneur des barres de boutons -->
+  <div id="button-container">
+      <!-- Première barre horizontale pour les pierres -->
+      <div class="button-bar" id="button-bar1">
+          <button id="ruby">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+                  <path d="M480-165q-17 0-33-7.5T419-194L113-560q-9-11-13.5-24T95-611q0-9 1.5-18.5T103-647l75-149q11-20 29.5-32t41.5-12h462q23 0 41.5 12t29.5 32l75 149q5 8 6.5 17.5T865-611q0 14-4.5 27T847-560L541-194q-12 14-28 21.5t-33 7.5Zm-95-475h190l-60-120h-70l-60 120Zm55 347v-267H218l222 267Zm80 0 222-267H520v267Zm144-347h106l-60-120H604l60 120Zm-474 0h106l60-120H250l-60 120Z" fill="#FF6F61"/>
+              </svg>
+              Rubis
+          </button>            
+          <button id="diamond">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+                  <path d="M480-165q-17 0-33-7.5T419-194L113-560q-9-11-13.5-24T95-611q0-9 1.5-18.5T103-647l75-149q11-20 29.5-32t41.5-12h462q23 0 41.5 12t29.5 32l75 149q5 8 6.5 17.5T865-611q0 14-4.5 27T847-560L541-194q-12 14-28 21.5t-33 7.5Zm-95-475h190l-60-120h-70l-60 120Zm55 347v-267H218l222 267Zm80 0 222-267H520v267Zm144-347h106l-60-120H604l60 120Zm-474 0h106l60-120H250l-60 120Z" fill="#A2C2E0"/>
+              </svg>
+              Diamant
+          </button>            
+          <button id="yellowDiamond">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+                  <path d="M480-165q-17 0-33-7.5T419-194L113-560q-9-11-13.5-24T95-611q0-9 1.5-18.5T103-647l75-149q11-20 29.5-32t41.5-12h462q23 0 41.5 12t29.5 32l75 149q5 8 6.5 17.5T865-611q0 14-4.5 27T847-560L541-194q-12 14-28 21.5t-33 7.5Zm-95-475h190l-60-120h-70l-60 120Zm55 347v-267H218l222 267Zm80 0 222-267H520v267Zm144-347h106l-60-120H604l60 120Zm-474 0h106l60-120H250l-60 120Z" fill="#F1E07D"/>
+              </svg>
+              Diamant Jaune
+          </button>            
+      </div>
+
+      <!-- Deuxième barre horizontale pour les couleurs de bagues -->
+      <div class="button-bar" id="button-bar2">
+          <button id="gold">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
+                  <circle cx="12" cy="12" r="10" fill="#FFCC66"/>
+              </svg>
+              Or
+          </button>
+          <button id="silver">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
+                  <circle cx="12" cy="12" r="10" fill="#D3D3D3"/>
+              </svg>
+              Argent
+          </button>
+          <button id="roseGold">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
+                  <circle cx="12" cy="12" r="10" fill="#E4B7B2"/>
+              </svg>
+              Or Rose
+          </button>
+      </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script>
+  <script src="scripts.js"></script>
 </body>
 </html>
