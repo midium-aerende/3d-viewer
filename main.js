@@ -5,6 +5,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { VignetteShader } from 'three/examples/jsm/shaders/VignetteShader.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 const width = window.innerWidth, height = window.innerHeight;
 
@@ -23,17 +24,59 @@ hdrLoader.load('./assets/rooftop_night_4k.hdr', (texture) => {
 
 scene.background = new THREE.Color(0xd6d0c3);
 
+// Fonction pour ajouter l'effet Fresnel
+const addFresnel = (material) => {
+    material.onBeforeCompile = (shader) => {
+        shader.uniforms.fresnelPower = { value: 3.5 };
+        shader.uniforms.fresnelColor = { value: new THREE.Color(0xffffff) };
+
+        shader.vertexShader = `
+            varying vec3 vNormalWorld;
+            varying vec3 vViewDir;
+            ${shader.vertexShader}
+        `.replace(
+            `#include <begin_vertex>`,
+            `
+            #include <begin_vertex>
+            vNormalWorld = normalize(mat3(modelMatrix) * normal);
+            vViewDir = normalize(cameraPosition - (modelMatrix * vec4(position, 1.0)).xyz);
+            `
+        );
+
+        shader.fragmentShader = `
+            uniform float fresnelPower;
+            uniform vec3 fresnelColor;
+            varying vec3 vNormalWorld;
+            varying vec3 vViewDir;
+            ${shader.fragmentShader}
+        `.replace(
+            `#include <output_fragment>`,
+            `
+            float fresnel = pow(1.0 - dot(vNormalWorld, vViewDir), fresnelPower);
+            gl_FragColor.rgb += fresnel * fresnelColor;
+
+            // Ajout d'un effet lumineux
+            gl_FragColor.rgb += fresnel * vec3(0.2, 0.3, 0.4); // Légère teinte brillante
+            #include <output_fragment>
+            `
+        );
+    };
+};
+
+// Création des matériaux pour les pierres avec des valeurs de réfraction maximisées
 const diamondMaterial = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
     metalness: 0.2,
     roughness: 0.01,
     transmission: 1.0,
-    ior: 2.42,
-    sheen: 0.8,
+    ior: 2.42, // Valeur élevée pour un indice de réfraction fort
+    sheen: 0.9,
     clearcoat: 1.0,
-    clearcoatRoughness: 0.05,
-    envMapIntensity: 3.0
+    clearcoatRoughness: 0.03,
+    envMapIntensity: 3.5,
+    refractionRatio: 1.52, // Augmente la réfraction au maximum
 });
+addFresnel(diamondMaterial);
 
 const rubyMaterial = new THREE.MeshPhysicalMaterial({
     color: 0xE0115F,
@@ -41,23 +84,29 @@ const rubyMaterial = new THREE.MeshPhysicalMaterial({
     roughness: 0.02,
     transmission: 1.0,
     ior: 1.77,
-    sheen: 0.7,
+    sheen: 0.8,
     clearcoat: 0.9,
-    envMapIntensity: 2.5
+    clearcoatRoughness: 0.05,
+    envMapIntensity: 3.0,
+    refractionRatio: 1.77, // Réfraction accrue pour un effet plus visible
 });
+addFresnel(rubyMaterial);
 
 const yellowDiamondMaterial = new THREE.MeshPhysicalMaterial({
     color: 0xFFFEA0,
     metalness: 0.2,
     roughness: 0.01,
     transmission: 1.0,
-    ior: 2.42,
+    ior: 2.42, // Refraction maximisée
     sheen: 0.8,
     clearcoat: 1.0,
     clearcoatRoughness: 0.03,
-    envMapIntensity: 3.0
+    envMapIntensity: 3.5,
+    refractionRatio: 1.52, // Réfraction haute
 });
+addFresnel(yellowDiamondMaterial);
 
+// Création des matériaux pour les anneaux
 const ringMaterialGold = new THREE.MeshPhysicalMaterial({
     color: 0xFFD700,
     metalness: 1.0,
@@ -85,6 +134,7 @@ const ringMaterialRoseGold = new THREE.MeshPhysicalMaterial({
     envMapIntensity: 2.0
 });
 
+// Ajout des lumières
 const light = new THREE.AmbientLight(0x404040, 1);
 scene.add(light);
 
@@ -100,6 +150,7 @@ scene.add(directionalLight);
 const loader = new GLTFLoader();
 let model = null;
 
+// Chargement du modèle GLTF
 loader.load('./model.glb', (gltf) => {
     model = gltf.scene;
     model.traverse((child) => {
@@ -117,6 +168,7 @@ loader.load('./model.glb', (gltf) => {
     console.error('Erreur lors du chargement du modèle :', error);
 });
 
+// Configuration du rendu
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(width, height);
 document.body.appendChild(renderer.domElement);
@@ -131,27 +183,39 @@ composer.addPass(vignettePass);
 vignettePass.uniforms['offset'].value = 0.8;
 vignettePass.uniforms['darkness'].value = 1.5;
 
-let isMouseDown = false;
-let previousMousePosition = { x: 0, y: 0 };
+// Ajout de l'effet bloom
+const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(width, height),
+    0.2, // Intensité augmentée
+    0.5,
+    0.2
+);
+composer.addPass(bloomPass);
 
-document.addEventListener('mousedown', () => {
-    isMouseDown = true;
-});
-
-document.addEventListener('mouseup', () => {
-    isMouseDown = false;
-});
-
-document.addEventListener('mousemove', (event) => {
-    if (isMouseDown && model) {
-        const deltaX = event.clientX - previousMousePosition.x;
-        const deltaY = event.clientY - previousMousePosition.y;
-        model.rotation.y += deltaX * 0.01;
-        model.rotation.x += deltaY * 0.01;
+// Gestion des matériaux dynamiques
+function changeStoneMaterial(material) {
+    if (model) {
+        model.traverse((child) => {
+            if (child.isMesh && child.name.toLowerCase().includes("stone")) {
+                child.material = material;
+                child.material.needsUpdate = true;
+            }
+        });
     }
-    previousMousePosition = { x: event.clientX, y: event.clientY };
-});
+}
 
+function changeRingMaterial(material) {
+    if (model) {
+        model.traverse((child) => {
+            if (child.isMesh && child.name.toLowerCase().includes("ring")) {
+                child.material = material;
+                child.material.needsUpdate = true;
+            }
+        });
+    }
+}
+
+// Gestion des événements utilisateur
 document.getElementById('ruby').addEventListener('click', () => {
     changeStoneMaterial(rubyMaterial);
 });
@@ -176,31 +240,40 @@ document.getElementById('roseGold').addEventListener('click', () => {
     changeRingMaterial(ringMaterialRoseGold);
 });
 
-function changeStoneMaterial(material) {
-    if (model) {
-        model.traverse((child) => {
-            if (child.isMesh && child.name.toLowerCase().includes("stone")) {
-                child.material = material;
-                child.material.needsUpdate = true;
-            }
-        });
-    }
-}
+// Manipulation de la rotation via la souris
+let isMouseDown = false;
+let previousMousePosition = { x: 0, y: 0 };
+let isRotatingAutomatically = true;
 
-function changeRingMaterial(material) {
-    if (model) {
-        model.traverse((child) => {
-            if (child.isMesh && child.name.toLowerCase().includes("ring")) {
-                child.material = material;
-                child.material.needsUpdate = true;
-            }
-        });
-    }
-}
+document.addEventListener('mousedown', (event) => {
+    isMouseDown = true;
+    previousMousePosition = { x: event.clientX, y: event.clientY };
+    isRotatingAutomatically = false;
+});
 
+document.addEventListener('mouseup', () => {
+    isMouseDown = false;
+    isRotatingAutomatically = true;
+});
+
+document.addEventListener('mousemove', (event) => {
+    if (isMouseDown && model) {
+        const deltaX = event.clientX - previousMousePosition.x;
+        const deltaY = event.clientY - previousMousePosition.y;
+
+        model.rotation.y += deltaX * 0.01;
+        model.rotation.x += deltaY * 0.01;
+
+        model.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, model.rotation.x));
+
+        previousMousePosition = { x: event.clientX, y: event.clientY };
+    }
+});
+
+// Animation et rendu
 function animate() {
-    if (model) {
-        model.rotation.y += 0.001;
+    if (model && isRotatingAutomatically) {
+        model.rotation.y += 0.01;
     }
     composer.render();
 }
