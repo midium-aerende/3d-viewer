@@ -1,0 +1,88 @@
+@keyframes slidein-fadein {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #2C2C2C;
+    color: #fff;
+}
+
+#price-display {
+    position: fixed;
+    top: 10px;
+    font-size: 26px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    animation: slidein-fadein 0.6s ease-out;
+    animation-fill-mode: forwards;
+    z-index: 10;
+}
+
+#button-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-top: 2px solid #444;
+}
+
+.button-column {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    text-align: center;
+    align-items: center;
+}
+
+button {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #444;
+    border: none;
+    cursor: pointer;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: slidein-fadein 0.6s ease-out;
+    animation-fill-mode: forwards;
+}
+
+button:hover {
+    background-color: #555;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button svg {
+    width: 35px;
+    height: 35px;
+}
