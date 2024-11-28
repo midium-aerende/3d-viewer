@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beerus Sama - Scène Interactive</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background-color: #111;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            text-align: center;
+            width: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #controls button,
+        #controls input {
+            background-color: #444;
+            border: 1px solid #777;
+            color: white;
+            padding: 12px;
+            margin: 8px 0;
+            width: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #controls button:hover,
+        #controls input:hover {
+            background-color: #555;
+            transform: scale(1.1);
+        }
+
+        #controls button:active,
+        #controls input:active {
+            background-color: #666;
+            transform: scale(1);
+        }
+
+        #controls input[type="file"] {
+            display: none;
+            /* Cacher l'input de fichier */
+        }
+
+        #file-icon {
+            font-size: 30px;
+            cursor: pointer;
+            background: #444;
+            padding: 10px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #file-icon:hover {
+            background-color: #555;
+            transform: scale(1.1);
+        }
+
+        #file-icon:active {
+            background-color: #666;
+            transform: scale(1);
+        }
+
+        #copyright {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            color: #aaa;
+            font-size: 14px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        @media (max-width: 768px) {
+            #controls {
+                width: 60px;
+            }
+
+            #controls button,
+            #controls input {
+                font-size: 18px;
+                padding: 10px;
+            }
+
+            #copyright {
+                left: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="controls">
+        <!-- Nouveau bouton de contact -->
+        <button id="contactButton">
+            <i class="fab fa-facebook"></i>
+        </button>
+
+        <button id="toggleLights"><i class="fas fa-lightbulb"></i></button>
+        <button id="increaseLight"><i class="fas fa-sun"></i></button>
+        <button id="decreaseLight"><i class="fas fa-cloud-sun"></i></button>
+        <button id="resetZoom"><i class="fas fa-search-plus"></i></button>
+        <button id="capturePhoto"><i class="fas fa-camera"></i></button>
+
+        <!-- Icône de chargement du fichier -->
+        <label for="loadGLB" id="file-icon" title="Charger un modèle GLB">
+            <i class="fas fa-plus"></i>
+        </label>
+        <input type="file" id="loadGLB" accept=".glb">
+    </div>
+
+    <div id="copyright">© Cyber Craft 2024</div>
+
+    <!-- Charger Three.js via CDN jsDelivr -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        let scene, camera, renderer, controls, currentModel;
+        let ambientLight, directionalLight, pointLight1, pointLight2, pointLight3;
+
+        // Initialisation de la scène
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000022);  // Fond galaxie, violet profond
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 1, 5);
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;
+            controls.screenSpacePanning = false;
+
+            // Lumières
+            ambientLight = new THREE.AmbientLight(0x00ccff, 0.6);  // Lumière ambiante bleue
+            scene.add(ambientLight);
+
+            directionalLight = new THREE.DirectionalLight(0x00ccff, 2);
+            directionalLight.position.set(5, 5, 5).normalize();
+            scene.add(directionalLight);
+
+            pointLight1 = new THREE.PointLight(0xff6600, 2, 100);
+            pointLight1.position.set(0, 5, 0);
+            scene.add(pointLight1);
+
+            pointLight2 = new THREE.PointLight(0x6600ff, 2, 100);
+            pointLight2.position.set(-3, 2, 0);
+            scene.add(pointLight2);
+
+            pointLight3 = new THREE.PointLight(0x00ff00, 2, 100);
+            pointLight3.position.set(3, 2, 0);
+            scene.add(pointLight3);
+
+            // Charger le modèle GLB par défaut (chemin direct)
+            loadGLBModel('model.glb');
+
+            animate();
+        }
+
+        // Fonction d'animation
+        let lastTime = 0;
+        function animate() {
+            const now = performance.now();
+            if (now - lastTime >= 16) {  // Limite la fréquence des mises à jour à 60 FPS (16ms)
+                controls.update();
+                renderer.render(scene, camera);
+                lastTime = now;
+            }
+            requestAnimationFrame(animate);
+        }
+
+
+        // Fonction pour charger un modèle GLB
+        function loadGLBModel(filePath) {
+            const loader = new THREE.GLTFLoader();
+            loader.load(filePath, function (gltf) {
+                // Supprimer l'ancien modèle s'il existe
+                if (currentModel) {
+                    scene.remove(currentModel);
+                }
+
+                // Ajouter le nouveau modèle
+                currentModel = gltf.scene;
+                scene.add(currentModel);
+            }, undefined, function (error) {
+                console.error("Erreur de chargement du modèle GLB:", error);
+            });
+        }
+
+        // Changer le modèle GLB via input fichier
+        document.getElementById("loadGLB").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                loadGLBModel(URL.createObjectURL(file));
+            }
+        });
+
+        // Capturer et télécharger l'image du canvas
+        // Capturer et télécharger l'image du canvas
+        document.getElementById("capturePhoto").addEventListener("click", () => {
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            let width, height;
+
+            if (screenWidth <= 768) {
+                width = screenWidth * 2;  // Pour mobile, utiliser 2x
+                height = screenHeight * 2;
+            } else {
+                width = screenWidth;  // Pour écrans larges, utiliser 2x aussi
+                height = screenHeight;
+            }
+
+            const renderTarget = new THREE.WebGLRenderTarget(width, height);
+            renderer.setRenderTarget(renderTarget);
+            renderer.render(scene, camera);
+            renderer.setRenderTarget(null);
+
+            const pixels = new Uint8Array(width * height * 4);
+            renderer.readRenderTargetPixels(renderTarget, 0, 0, width, height, pixels);
+
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = width;
+            canvas.height = height;
+
+            const imageData = ctx.createImageData(width, height);
+            for (let i = 0; i < width * height * 4; i++) {
+                imageData.data[i] = pixels[i];
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+
+            // Inverser l'image verticalement avec drawImage
+            ctx.save();  // Sauvegarder l'état du contexte
+            ctx.translate(0, height);  // Déplacer le point d'origine en bas
+            ctx.scale(1, -1);  // Inverser verticalement
+            ctx.drawImage(canvas, 0, 0);  // Dessiner l'image inversée
+            ctx.restore();  // Restaurer l'état du contexte
+
+            // Ajouter le filigrane au centre
+            ctx.font = '40px Arial';
+            ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("Cyber Craft", width / 2, height / 2);
+
+            // Télécharger l'image avec filigrane
+            const dataURL = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = "scene_with_watermark.png";
+            link.click();
+        });
+
+
+        // Contrôles pour gérer la lumière et l'intensité
+        document.getElementById("toggleLights").addEventListener("click", () => {
+            if (ambientLight.intensity > 0) {
+                ambientLight.intensity = 0;
+                directionalLight.intensity = 0;
+                pointLight1.intensity = 0;
+                pointLight2.intensity = 0;
+                pointLight3.intensity = 0;
+            } else {
+                ambientLight.intensity = 0.6;
+                directionalLight.intensity = 2;
+                pointLight1.intensity = 2;
+                pointLight2.intensity = 2;
+                pointLight3.intensity = 2;
+            }
+        });
+
+        document.getElementById("increaseLight").addEventListener("click", () => {
+            ambientLight.intensity += 0.1;
+            directionalLight.intensity += 0.1;
+            pointLight1.intensity += 0.1;
+            pointLight2.intensity += 0.1;
+            pointLight3.intensity += 0.1;
+        });
+
+        document.getElementById("decreaseLight").addEventListener("click", () => {
+            ambientLight.intensity = Math.max(0, ambientLight.intensity - 0.1);
+            directionalLight.intensity = Math.max(0, directionalLight.intensity - 0.1);
+            pointLight1.intensity = Math.max(0, pointLight1.intensity - 0.1);
+            pointLight2.intensity = Math.max(0, pointLight2.intensity - 0.1);
+            pointLight3.intensity = Math.max(0, pointLight3.intensity - 0.1);
+        });
+
+        document.getElementById("resetZoom").addEventListener("click", () => {
+            camera.position.set(0, 1, 5);
+            controls.update();
+        });
+
+        // Ajuster le canvas à la taille de la fenêtre
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+
+        // Initialisation de la scène
+        init();
+
+        // Lien vers votre page Facebook ou profil
+        const facebookLink = 'https://web.facebook.com/andri.iharimisa.aitch/';  // Remplacez par votre lien Facebook
+
+        document.getElementById('contactButton').addEventListener('click', function () {
+            window.open(facebookLink, '_blank');  // Ouvrir dans un nouvel onglet
+        });
+
+    </script>
+
+</body>
+
+</html>
